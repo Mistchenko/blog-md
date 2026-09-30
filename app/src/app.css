@@ -1,0 +1,73 @@
+@import 'sv5ui/theme.css';
+@plugin '@tailwindcss/typography';
+
+html,
+body {
+  background-color: var(--color-surface);
+  color: var(--color-on-surface);
+}
+
+/* Подсветка кода highlight.js на токенах темы: одна схема для светлой и тёмной темы */
+.prose pre {
+  background-color: var(--color-surface-container);
+  color: var(--color-on-surface);
+  border: 1px solid var(--color-outline-variant);
+}
+
+.prose :where(code):not(:where(pre *)) {
+  background-color: var(--color-surface-container);
+  border-radius: 0.25rem;
+  padding: 0.1em 0.35em;
+  font-weight: 500;
+}
+
+.prose :where(code):not(:where(pre *))::before,
+.prose :where(code):not(:where(pre *))::after {
+  content: none;
+}
+
+.hljs-comment,
+.hljs-quote {
+  color: var(--color-on-surface-variant);
+  font-style: italic;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-built_in,
+.hljs-type {
+  color: var(--color-tertiary);
+}
+
+.hljs-string,
+.hljs-regexp,
+.hljs-addition,
+.hljs-attribute {
+  color: var(--color-success);
+}
+
+.hljs-number,
+.hljs-literal,
+.hljs-symbol,
+.hljs-bullet {
+  color: var(--color-warning);
+}
+
+.hljs-title,
+.hljs-section,
+.hljs-name,
+.hljs-function .hljs-title {
+  color: var(--color-primary);
+}
+
+.hljs-attr,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-params {
+  color: var(--color-info);
+}
+
+.hljs-deletion,
+.hljs-meta {
+  color: var(--color-error);
+}

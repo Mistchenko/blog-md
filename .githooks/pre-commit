@@ -1,0 +1,21 @@
+#!/bin/sh
+# Качество кода перед коммитом: форматирование, линтеры, типы.
+# Проверяется только затронутая часть. Пропустить разово: git commit --no-verify
+set -e
+cd "$(git rev-parse --show-toplevel)"
+
+staged=$(git diff --cached --name-only --diff-filter=ACMR)
+targets=""
+if echo "$staged" | grep -q '^server/'; then
+  targets="$targets format-check-server lint-server check-server"
+fi
+if echo "$staged" | grep -q '^app/'; then
+  targets="$targets format-check-app lint-app check-app"
+fi
+[ -z "$targets" ] && exit 0
+
+echo "pre-commit: make$targets"
+make $targets || {
+  echo "Коммит остановлен. Исправить форматирование: make format; автоисправление линтеров: make lint-fix"
+  exit 1
+}

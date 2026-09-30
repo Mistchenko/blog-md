@@ -1,0 +1,33 @@
+name: blog-md
+
+services:
+  server:
+    build:
+      context: ../server
+      dockerfile: ../docker/server.Dockerfile
+    environment:
+      DATA_DIR: /data
+    volumes:
+      - ../server:/srv/server
+      - ../volumes/data:/data:ro
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  app:
+    build:
+      context: ../app
+      dockerfile: ../docker/app.Dockerfile
+    environment:
+      API_URL: http://server:8000
+    volumes:
+      - ../app:/opt/app
+    ports:
+      - "5173:5173"
+    depends_on:
+      server:
+        condition: service_healthy
