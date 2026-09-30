@@ -166,6 +166,9 @@ dev-сервера Vite (`/src/…`, `/@vite/…`). Работают «наза�
 
 ## 9. Контроль качества
 
+Все проверки разом — `make verify`: `format-check`, `lint`, `check`, `coverage`, `complexity`,
+`bandit`; выполняются все шаги, в конце сводка упавших, при любом провале — код ошибки.
+
 - Тесты (`make test`):
   - backend — pytest, `server/tests`;
   - frontend — Vitest в окружении jsdom, `app/tests`.

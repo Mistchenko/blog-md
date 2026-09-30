@@ -1,6 +1,6 @@
 COMPOSE := docker compose -f docker/compose.yml
 
-.PHONY: hooks dev up down build logs test test-server test-app coverage coverage-server coverage-app check check-server check-app lint lint-server lint-app lint-fix bandit format format-server format-app format-check format-check-server format-check-app complexity complexity-server complexity-app complexity-report app-add ps
+.PHONY: verify hooks dev up down build logs test test-server test-app coverage coverage-server coverage-app check check-server check-app lint lint-server lint-app lint-fix bandit format format-server format-app format-check format-check-server format-check-app complexity complexity-server complexity-app complexity-report app-add ps
 
 dev: ## Собрать образы и запустить сервисы с логами в терминале
 	$(COMPOSE) up --build
@@ -88,6 +88,19 @@ complexity-app: ## Сложность frontend (ESLint, правило complexit
 complexity-report: ## Отчёт: сложность каждой функции backend и frontend
 	$(COMPOSE) run --rm --no-deps server radon cc src -s -a
 	$(COMPOSE) run --rm --no-deps app npm run -s complexity:report
+
+# Порядок: сначала быстрые проверки. Тесты запускает coverage, отдельный test не нужен
+VERIFY_STEPS := format-check lint check coverage complexity bandit
+
+verify: ## Все проверки и тесты backend и frontend; в конце — сводка, ошибка, если что-то не прошло
+	@failed=""; \
+	for step in $(VERIFY_STEPS); do \
+		echo; echo "==> make $$step"; \
+		$(MAKE) --no-print-directory $$step || failed="$$failed $$step"; \
+	done; \
+	echo; \
+	if [ -n "$$failed" ]; then echo "Не прошли:$$failed"; exit 1; fi; \
+	echo "Все проверки прошли: $(VERIFY_STEPS)"
 
 hooks: ## Подключить git-хуки из .githooks (проверка качества кода перед коммитом)
 	git config core.hooksPath .githooks
